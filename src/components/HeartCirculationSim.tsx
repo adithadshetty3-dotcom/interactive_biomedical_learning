@@ -510,7 +510,7 @@ export default function HeartCirculationSim() {
             </div>
             <h1 className={`text-xl font-bold tracking-tight font-display ${
               themeMode === "clinical" ? "text-cyan-100" : "text-slate-950"
-            }`}>BIYLI <span className="font-light text-slate-400">| Complete Heart Circulation 2D</span></h1>
+            }`}>BILP <span className="font-light text-slate-400">| Complete Heart Circulation 2D</span></h1>
           </div>
         </div>
 
@@ -1579,7 +1579,7 @@ export default function HeartCirculationSim() {
           : "border-slate-200 bg-slate-100 text-slate-500"
       }`} id="primary-footer">
         <div>
-          <span>BIYLI Biomedical v1.2 // Module_01 of_06 // University MVP Draft Demo</span>
+          <span>BILP Biomedical v1.2 // Module_01 of_06 // University MVP Draft Demo</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-slate-400">

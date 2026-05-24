@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import HeartCirculationSim from "./components/HeartCirculationSim";
+import EcgPatternSim from "./components/EcgPatternSim";
 import { 
   Dna, 
   Layers, 
@@ -13,10 +14,11 @@ import {
   Sparkles,
   Search,
   Settings,
-  BellRing
+  BellRing,
+  Heart
 } from "lucide-react";
 
-// The six modules in the BIYLI platform syllabus
+// The six modules in the BILP platform syllabus
 interface ModuleCard {
   id: number;
   label: string;
@@ -33,13 +35,22 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     label: "FEATURE 1 of 6",
     codename: "CARDIO_M_2D",
     title: "Working of the Heart",
-    icon: Activity,
+    icon: Heart,
     status: "active",
     shortDesc: "Interactive 2D educational cardiac loop mapping systemic and pulmonary circulation chambers & valves."
   },
   {
     id: 2,
     label: "FEATURE 2 of 6",
+    codename: "ECG_P_DET",
+    title: "Smart ECG Pattern Detection",
+    icon: Activity,
+    status: "active",
+    shortDesc: "Real-time HTML5 oscilloscope rendering normal rhythm, tachycardia, bradycardia, and irregular AFib with dynamic tuning and physical assessment."
+  },
+  {
+    id: 3,
+    label: "FEATURE 3 of 6",
     codename: "NEURO_S_SYS",
     title: "Synaptic Transmission",
     icon: Brain,
@@ -47,8 +58,8 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     shortDesc: "Visual simulator mapping neurotransmitter vesicle release, post-synaptic receptors & action potential."
   },
   {
-    id: 3,
-    label: "FEATURE 3 of 6",
+    id: 4,
+    label: "FEATURE 4 of 6",
     codename: "THERMO_R_BIO",
     title: "Endocrine Homeostasis",
     icon: Thermometer,
@@ -56,8 +67,8 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     shortDesc: "Negative feedback simulator representing blood glucose regulation and endocrine pancreas signaling."
   },
   {
-    id: 4,
-    label: "FEATURE 4 of 6",
+    id: 5,
+    label: "FEATURE 5 of 6",
     codename: "NEPHRO_D_FILT",
     title: "Renal Nephron Filtration",
     icon: Layers,
@@ -65,22 +76,13 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     shortDesc: "Under construction. Simulates glomerular filtration rates & countercurrent multiplication columns."
   },
   {
-    id: 5,
-    label: "FEATURE 5 of 6",
+    id: 6,
+    label: "FEATURE 6 of 6",
     codename: "IMMUNO_A_DEF",
     title: "Leukocyte Chemotaxis",
     icon: ShieldAlert,
     status: "locked",
     shortDesc: "Under construction. Interactive dynamic cellular receptor binding during pathogenic infection."
-  },
-  {
-    id: 6,
-    label: "FEATURE 6 of 6",
-    codename: "GEN_T_CRISPR",
-    title: "CRISPR-Cas9 Editing",
-    icon: Dna,
-    status: "locked",
-    shortDesc: "Under construction. Standalone molecular simulator mapping double-stranded cleavage & RNA guide synthesis."
   }
 ];
 
@@ -111,7 +113,7 @@ export default function App() {
                 BIOMED_PLATFORM // LAB
               </div>
               <h1 className="text-lg font-bold font-display tracking-tight text-slate-100 flex items-center gap-1.5">
-                BIYLI Console
+                BILP Console
               </h1>
             </div>
           </div>
@@ -219,6 +221,8 @@ export default function App() {
       <div className="flex-1 flex flex-col overflow-y-auto" id="main-content-canvas">
         {activeModule === 1 ? (
           <HeartCirculationSim />
+        ) : activeModule === 2 ? (
+          <EcgPatternSim />
         ) : (
           /* Locked feature fallbacks (just in case they somehow press a development module) */
           <div className="flex-1 flex flex-col items-center justify-center py-24 text-center p-6 bg-slate-950">
@@ -227,7 +231,7 @@ export default function App() {
             </div>
             <h2 className="text-lg font-bold font-display text-slate-400">Module Under Construction</h2>
             <p className="text-xs text-slate-500 mt-2 max-w-sm leading-relaxed">
-              BIYLI Educational engineering curriculum feature and assets are currently locked. Complete the prior sequence assessments first.
+              BILP Educational engineering curriculum feature and assets are currently locked. Complete the prior sequence assessments first.
             </p>
           </div>
         )}
