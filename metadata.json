@@ -1,0 +1,6 @@
+{
+  "name": "BIYLI",
+  "description": "Biomedical Interactive Learning Platform for teaching biomedical concepts through clinical simulations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
