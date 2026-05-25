@@ -4,6 +4,7 @@ import EcgPatternSim from "./components/EcgPatternSim";
 import HeartDiseasesSim from "./components/HeartDiseasesSim";
 import QuizLearningGames from "./components/QuizLearningGames";
 import FlashcardsStudyLab from "./components/FlashcardsStudyLab";
+import PulseAiTutorChatbot from "./components/PulseAiTutorChatbot";
 import { 
   Dna, 
   Layers, 
@@ -82,11 +83,11 @@ const SYLLABUS_MODULES: ModuleCard[] = [
   {
     id: 6,
     label: "FEATURE 6 of 6",
-    codename: "IMMUNO_A_DEF",
-    title: "Leukocyte Chemotaxis",
-    icon: ShieldAlert,
-    status: "locked",
-    shortDesc: "Under construction. Interactive dynamic cellular receptor binding during pathogenic infection."
+    codename: "PULSE_AI_CHAT",
+    title: "PulseAI Tutor Chat",
+    icon: Brain,
+    status: "active",
+    shortDesc: "AI-Powered biology tutor chatbot to reinforce heart physiology, explain circulation routes, and clarify ECG rhythms."
   }
 ];
 
@@ -370,6 +371,11 @@ export default function App() {
             gainXP={gainXP}
             streak={streak}
             setStreak={setStreak}
+            soundEnabled={soundEnabled}
+            playPulseSound={playPulseSound}
+          />
+        ) : activeModule === 6 ? (
+          <PulseAiTutorChatbot 
             soundEnabled={soundEnabled}
             playPulseSound={playPulseSound}
           />
