@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import HeartCirculationSim from "./components/HeartCirculationSim";
 import EcgPatternSim from "./components/EcgPatternSim";
 import HeartDiseasesSim from "./components/HeartDiseasesSim";
+import QuizLearningGames from "./components/QuizLearningGames";
+import FlashcardsStudyLab from "./components/FlashcardsStudyLab";
 import { 
   Dna, 
   Layers, 
@@ -16,7 +18,8 @@ import {
   Search,
   Settings,
   BellRing,
-  Heart
+  Heart,
+  Award
 } from "lucide-react";
 
 // The six modules in the BILP platform syllabus
@@ -61,20 +64,20 @@ const SYLLABUS_MODULES: ModuleCard[] = [
   {
     id: 4,
     label: "FEATURE 4 of 6",
-    codename: "THERMO_R_BIO",
-    title: "Endocrine Homeostasis",
-    icon: Thermometer,
-    status: "locked",
-    shortDesc: "Negative feedback simulator representing blood glucose regulation and endocrine pancreas signaling."
+    codename: "CARDIAC_QUIZ",
+    title: "Quiz & Learning Games",
+    icon: Award,
+    status: "active",
+    shortDesc: "Interactive anatomical trivia, dynamic ECG ID game, drag function mapping, clinical case scenarios, and rapid ER triage."
   },
   {
     id: 5,
     label: "FEATURE 5 of 6",
-    codename: "NEPHRO_D_FILT",
-    title: "Renal Nephron Filtration",
-    icon: Layers,
-    status: "locked",
-    shortDesc: "Under construction. Simulates glomerular filtration rates & countercurrent multiplication columns."
+    codename: "FLASH_CARDS",
+    title: "Flashcard Study Lab",
+    icon: Brain,
+    status: "active",
+    shortDesc: "Interactive learning card system with spaced repetition, image-based anatomy labels, custom AI revision voice assistant, and diagnostic glossary."
   },
   {
     id: 6,
@@ -90,6 +93,132 @@ const SYLLABUS_MODULES: ModuleCard[] = [
 export default function App() {
   const [activeModule, setActiveModule] = useState<number>(1);
   const [panelSearch, setPanelSearch] = useState<string>("");
+
+  // Centralized interrelated gamification states
+  const [xp, setXp] = useState<number>(() => {
+    const saved = localStorage.getItem("bilp_xp");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [streak, setStreak] = useState<number>(() => {
+    const saved = localStorage.getItem("bilp_streak_val");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem("bilp_sound");
+    return saved !== "false";
+  });
+
+  // Sound Synthesizers with Web Audio
+  const playPulseSound = (type: "correct" | "wrong" | "lub-dub" | "alarm" | "flatline") => {
+    if (!soundEnabled) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      if (type === "correct") {
+        // High dual melody chime
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioCtx.currentTime + 0.3);
+        osc2.stop(audioCtx.currentTime + 0.3);
+      } else if (type === "wrong") {
+        // Low discordant buzz sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(130, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      } else if (type === "lub-dub") {
+        // lub-dub cardiac pulses
+        const oscLub = audioCtx.createOscillator();
+        const oscDub = audioCtx.createOscillator();
+        const gainLub = audioCtx.createGain();
+        const gainDub = audioCtx.createGain();
+
+        // Lub frequency (low)
+        oscLub.frequency.setValueAtTime(65, audioCtx.currentTime);
+        gainLub.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gainLub.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+        oscLub.connect(gainLub);
+        gainLub.connect(audioCtx.destination);
+        oscLub.start();
+        oscLub.stop(audioCtx.currentTime + 0.12);
+
+        // Dub frequency (higher, briefly delayed)
+        setTimeout(() => {
+          try {
+            oscDub.frequency.setValueAtTime(80, audioCtx.currentTime);
+            gainDub.gain.setValueAtTime(0.07, audioCtx.currentTime);
+            gainDub.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            oscDub.connect(gainDub);
+            gainDub.connect(audioCtx.destination);
+            oscDub.start();
+            oscDub.stop(audioCtx.currentTime + 0.15);
+          } catch (e) {}
+        }, 130);
+      } else if (type === "alarm") {
+        // Urgent warning beep
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } else if (type === "flatline") {
+        // Discordant persistent alert chirp
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(380, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      }
+    } catch (e) {
+      console.log("Audio synthesized blocked by browser context.");
+    }
+  };
+
+  const gainXP = (amount: number) => {
+    setXp((prev) => {
+      const nextXP = prev + amount;
+      localStorage.setItem("bilp_xp", nextXP.toString());
+      return nextXP;
+    });
+  };
+
+  // Sync state variables with local storage
+  React.useEffect(() => {
+    localStorage.setItem("bilp_xp", xp.toString());
+  }, [xp]);
+
+  React.useEffect(() => {
+    localStorage.setItem("bilp_streak_val", streak.toString());
+  }, [streak]);
+
+  React.useEffect(() => {
+    localStorage.setItem("bilp_sound", soundEnabled ? "true" : "false");
+  }, [soundEnabled]);
 
   const filteredModules = SYLLABUS_MODULES.filter((mod) => 
     mod.title.toLowerCase().includes(panelSearch.toLowerCase()) ||
@@ -226,6 +355,24 @@ export default function App() {
           <EcgPatternSim />
         ) : activeModule === 3 ? (
           <HeartDiseasesSim />
+        ) : activeModule === 4 ? (
+          <QuizLearningGames 
+            xp={xp}
+            setXp={setXp}
+            streak={streak}
+            setStreak={setStreak}
+            soundEnabled={soundEnabled}
+            setSoundEnabled={setSoundEnabled}
+          />
+        ) : activeModule === 5 ? (
+          <FlashcardsStudyLab 
+            xp={xp}
+            gainXP={gainXP}
+            streak={streak}
+            setStreak={setStreak}
+            soundEnabled={soundEnabled}
+            playPulseSound={playPulseSound}
+          />
         ) : (
           /* Locked feature fallbacks (just in case they somehow press a development module) */
           <div className="flex-1 flex flex-col items-center justify-center py-24 text-center p-6 bg-slate-950">
