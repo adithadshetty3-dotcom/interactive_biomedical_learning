@@ -15,6 +15,7 @@ import {
   ShieldAlert, 
   Database,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   Search,
   Settings,
@@ -39,7 +40,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     id: 1,
     label: "FEATURE 1 of 6",
     codename: "CARDIO_M_2D",
-    title: "Working of the Heart",
+    title: "Working of Heart",
     icon: Heart,
     status: "active",
     shortDesc: "Interactive 2D educational cardiac loop mapping systemic and pulmonary circulation chambers & valves."
@@ -57,7 +58,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     id: 3,
     label: "FEATURE 3 of 6",
     codename: "HEART_DIS_SIM",
-    title: "Types of Heart Diseases",
+    title: "Types of Heart Disease",
     icon: ShieldAlert,
     status: "active",
     shortDesc: "Interactive 3D/2D cardiac pathology visualizer charting blockages, congenital leaks & therapeutic procedures."
@@ -66,7 +67,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     id: 4,
     label: "FEATURE 4 of 6",
     codename: "CARDIAC_QUIZ",
-    title: "Quiz & Learning Games",
+    title: "Quiz and Learning Games",
     icon: Award,
     status: "active",
     shortDesc: "Interactive anatomical trivia, dynamic ECG ID game, drag function mapping, clinical case scenarios, and rapid ER triage."
@@ -75,7 +76,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     id: 5,
     label: "FEATURE 5 of 6",
     codename: "FLASH_CARDS",
-    title: "Flashcard Study Lab",
+    title: "Flash Card Study Lab",
     icon: Brain,
     status: "active",
     shortDesc: "Interactive learning card system with spaced repetition, image-based anatomy labels, custom AI revision voice assistant, and diagnostic glossary."
@@ -84,7 +85,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
     id: 6,
     label: "FEATURE 6 of 6",
     codename: "PULSE_AI_CHAT",
-    title: "PulseAI Tutor Chat",
+    title: "AI Tutorbot",
     icon: Brain,
     status: "active",
     shortDesc: "AI-Powered biology tutor chatbot to reinforce heart physiology, explain circulation routes, and clarify ECG rhythms."
@@ -94,6 +95,7 @@ const SYLLABUS_MODULES: ModuleCard[] = [
 export default function App() {
   const [activeModule, setActiveModule] = useState<number>(1);
   const [panelSearch, setPanelSearch] = useState<string>("");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Centralized interrelated gamification states
   const [xp, setXp] = useState<number>(() => {
@@ -228,25 +230,43 @@ export default function App() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row font-sans">
+    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row font-sans relative">
       
       {/* SIDEBAR NAVIGATION PORTAL PANEL */}
-      <aside className="w-full md:w-80 shrink-0 border-b md:border-b-0 md:border-r border-slate-900 bg-slate-950/90 flex flex-col justify-between" id="portal-sidebar">
+      <aside 
+        className={`shrink-0 bg-slate-950/90 flex flex-col justify-between border-slate-900 transition-all duration-350 ease-in-out overflow-hidden ${
+          isSidebarCollapsed 
+            ? "w-0 h-0 md:h-auto md:w-0 border-r-0 border-b-0 p-0" 
+            : "w-full md:w-80 border-b md:border-b-0 md:border-r"
+        }`} 
+        id="portal-sidebar"
+      >
         
-        <div>
+        <div className={isSidebarCollapsed ? "hidden" : "block text-left"}>
           {/* PLATFORM TITLE CORE LOGO */}
-          <div className="p-6 border-b border-slate-900 flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
-              <Dna className="w-5 h-5 animate-spin-slow" />
-            </div>
-            <div>
-              <div className="text-[10px] font-mono font-bold text-emerald-400 tracking-wider">
-                BIOMED_PLATFORM // LAB
+          <div className="p-6 border-b border-slate-900 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
+                <Dna className="w-5 h-5 animate-spin-slow" />
               </div>
-              <h1 className="text-lg font-bold font-display tracking-tight text-slate-100 flex items-center gap-1.5">
-                BILP Console
-              </h1>
+              <div>
+                <div className="text-[10px] font-mono font-bold text-emerald-400 tracking-wider">
+                  BIOMED_PLATFORM
+                </div>
+                <h1 className="text-lg font-bold font-display tracking-tight text-slate-100">
+                  BILP Console
+                </h1>
+              </div>
             </div>
+
+            {/* COLLAPSE TRIGGER */}
+            <button
+              onClick={() => setIsSidebarCollapsed(true)}
+              className="p-1.5 rounded-lg bg-slate-920 hover:bg-slate-900 border border-slate-800 text-slate-400 hover:text-emerald-400 cursor-pointer transition-colors"
+              title="Slide back menu"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
           </div>
 
           {/* QUICK BIOMEDICAL SEARCH BAR */}
@@ -285,7 +305,7 @@ export default function App() {
                       }
                     }}
                     disabled={item.status !== "active"}
-                    className={`w-full text-left p-3 rounded-xl border text-xs transition-all duration-300 relative overflow-hidden flex items-center justify-between group ${
+                    className={`w-full text-left p-3.5 rounded-xl border text-xs transition-all duration-300 relative overflow-hidden flex items-center justify-between group ${
                       isSelected
                         ? "bg-cyan-950/30 border-cyan-500 text-cyan-300"
                         : item.status === "active"
@@ -303,22 +323,13 @@ export default function App() {
                       </div>
                       
                       <div>
-                        <div className="font-mono text-[9px] text-slate-550 group-hover:text-slate-400">
-                          {item.label} // {item.codename}
-                        </div>
-                        <div className="font-bold tracking-tight mt-0.5">{item.title}</div>
+                        <div className="font-bold tracking-tight text-sm text-slate-200 group-hover:text-slate-50">{item.title}</div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       {item.status === "active" && (
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                      )}
-                      {item.status === "development" && (
-                        <span className="text-[8px] border border-amber-900/30 bg-amber-950/20 text-amber-500 px-1 py-0.5 rounded font-mono">DEV</span>
-                      )}
-                      {item.status === "locked" && (
-                        <span className="text-[8px] border border-slate-800 bg-slate-900/20 text-slate-500 px-1 py-0.5 rounded font-mono">LOCK</span>
                       )}
                     </div>
                   </button>
@@ -329,24 +340,26 @@ export default function App() {
 
         </div>
 
-        {/* SIDEBAR FOOTER METADATA STAMP */}
-        <div className="p-4 border-t border-slate-900 bg-slate-950/50" id="sidebar-footer">
-          <div className="rounded-lg p-3 bg-slate-900/40 border border-slate-900 text-[10px] font-mono text-slate-500 space-y-1.5">
-            <div className="flex items-center justify-between text-slate-400">
-              <span>SERVICE_ID:</span>
-              <span className="text-emerald-400 font-bold">NODE_03_LIVE</span>
-            </div>
-            <div>
-              <span>AUTH CODE:</span>
-              <span className="text-cyan-500 ml-1">MVP_DEMO_2026</span>
-            </div>
-            <div className="text-[9px] pt-1 border-t border-slate-950/80 text-slate-500/80">
-              *Designed for Biomedical engineering faculties & students.
-            </div>
+        {/* Removed redundant bottom Service ID author metadata stamp box as requested */}
+        <div className={isSidebarCollapsed ? "hidden" : "p-4 border-t border-slate-900 bg-slate-950/10"}>
+          <div className="text-[10px] text-slate-600 font-mono text-center">
+            BIOMEDICAL LEARNING PLATFORM
           </div>
         </div>
 
       </aside>
+
+      {/* COLLAPSED EXPAND TOGGLE TRIGGER Arrow - Slides the sidebar back out when collapsed */}
+      {isSidebarCollapsed && (
+        <button
+          onClick={() => setIsSidebarCollapsed(false)}
+          className="fixed top-4 left-4 z-50 p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 hover:text-emerald-300 rounded-xl shadow-2xl transition-all flex items-center gap-2 cursor-pointer group"
+          title="Show menu"
+        >
+          <ChevronRight className="w-4 h-4 animate-pulse" />
+          <span className="text-xs font-mono font-bold tracking-wider text-slate-400 group-hover:text-emerald-400">Expand Menu</span>
+        </button>
+      )}
 
       {/* CORE WORKSPACE INNER CONTENT */}
       <div className="flex-1 flex flex-col overflow-y-auto" id="main-content-canvas">
