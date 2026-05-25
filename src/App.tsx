@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import HeartCirculationSim from "./components/HeartCirculationSim";
 import EcgPatternSim from "./components/EcgPatternSim";
+import HeartDiseasesSim from "./components/HeartDiseasesSim";
 import { 
   Dna, 
   Layers, 
@@ -51,11 +52,11 @@ const SYLLABUS_MODULES: ModuleCard[] = [
   {
     id: 3,
     label: "FEATURE 3 of 6",
-    codename: "NEURO_S_SYS",
-    title: "Synaptic Transmission",
-    icon: Brain,
-    status: "development",
-    shortDesc: "Visual simulator mapping neurotransmitter vesicle release, post-synaptic receptors & action potential."
+    codename: "HEART_DIS_SIM",
+    title: "Types of Heart Diseases",
+    icon: ShieldAlert,
+    status: "active",
+    shortDesc: "Interactive 3D/2D cardiac pathology visualizer charting blockages, congenital leaks & therapeutic procedures."
   },
   {
     id: 4,
@@ -223,6 +224,8 @@ export default function App() {
           <HeartCirculationSim />
         ) : activeModule === 2 ? (
           <EcgPatternSim />
+        ) : activeModule === 3 ? (
+          <HeartDiseasesSim />
         ) : (
           /* Locked feature fallbacks (just in case they somehow press a development module) */
           <div className="flex-1 flex flex-col items-center justify-center py-24 text-center p-6 bg-slate-950">
